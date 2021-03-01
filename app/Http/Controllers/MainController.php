@@ -23,7 +23,7 @@ class MainController extends Controller
         $request->validate([
             'fullname' => 'required | min:3 | max:30 ',
             'username' => 'required | min:3 | max:20',
-            'email' => 'required | min:10 | max:50 | email',
+            'email' => 'required | min:10 | max:50 | email | unique:users',
             'password' => 'required | min:8 | max:20 | alpha_num',
             'cpassword' => 'required | same:password',
             'address' => 'required',
@@ -49,8 +49,7 @@ class MainController extends Controller
                  $save = $user->save();
 
                  if($save){
-                    session()->flash('success', 'Your message');
-                    return redirect()->route('login');
+                    return redirect('/auth/login')->with('success','Registration Succesfull');
 
                  }else{
                      return back()->with('fail','Something went wrong, try again later');
@@ -72,9 +71,10 @@ class MainController extends Controller
             //check password
             if(Hash::check($request->password, $userInfo->password)){
                 $request->session()->put('LoggedUser', $userInfo->id);
-                return redirect('/auth/login')->with('fail','Incorrect password');
+                return redirect('user/dashboard');
 
-            }else{
+            }
+            else{
                 return back()->with('fail','Incorrect password');
             }
         }
@@ -86,4 +86,19 @@ class MainController extends Controller
             return redirect('/auth/login');
         }
     }
+
+    function dashboard(){
+        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
+        return view('user.dashboard', $data);
+    }
+    function settings(){
+        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
+        return view('user.settings', $data);
+    }
+
+    function profile(){
+        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
+        return view('user.profile', $data);
+    }
+    
 }

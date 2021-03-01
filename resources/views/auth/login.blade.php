@@ -13,7 +13,11 @@
             <div class="col-md-4 col-md-offset-4">
                 <h4>| Login |</h4><hr>
                 <form action="{{route('auth.check')}}" method="post">
-                {{Session::get('success')}}
+                @if(Session::get('success'))
+                    <div class="alert alert-success">
+                        {{ Session::get('success') }}
+                    </div>
+                @endif
                 @if(Session::get('fail'))
                 <div class="alert alert-danger">
                     {{ Session::get('fail') }}
