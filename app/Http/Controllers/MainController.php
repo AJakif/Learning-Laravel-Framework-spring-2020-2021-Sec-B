@@ -16,8 +16,8 @@ class MainController extends Controller
     function check(Request $request){
         //Validate requests
         $request->validate([
-             'email'=>'required|email',
-             'password'=>'required|min:5|max:12'
+             'email'=>'required|email|max:50',
+             'password'=>'required|alphaNum|min:8|max:20'
         ]);
 
         $userInfo = User::where('email','=', $request->email)->first();
@@ -28,7 +28,7 @@ class MainController extends Controller
             //check password
             if(Hash::check($request->password, $userInfo->password)){
                 $request->session()->put('LoggedUser', $userInfo->id);
-                return redirect('admin/dashboard');
+                return redirect('user/dashboard');
 
             }else{
                 return back()->with('fail','Incorrect password');
