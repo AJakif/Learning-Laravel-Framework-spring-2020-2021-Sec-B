@@ -12,15 +12,59 @@ class MainController extends Controller
     function login(){
         return view('auth.login');
     }
+
+    function register(){
+        return view('auth.register');
+    }
+
+    function save(Request $request){
+        
+        //Validate requests
+        $request->validate([
+            'fullname' => 'required | min:3 | max:30 ',
+            'username' => 'required | min:3 | max:20',
+            'email' => 'required | min:10 | max:50 | email',
+            'password' => 'required | min:8 | max:20 | alpha_num',
+            'cpassword' => 'required | same:password',
+            'address' => 'required',
+            'company' => 'required | min:3 | max:20',
+            'number' => 'required|digits:11',
+            'city' => 'required | min:3 | max:20',
+            'country' => 'required | min:3 | max:20',
+
+        ]);
+
+                 //Insert data into database
+                 $user = new user;
+                 $user->fullname = $request->fullname;
+                 $user->username = $request->username;
+                 $user->email = $request->email;
+                 $user->password = Hash::make($request->password);
+                 $user->address = $request->address;
+                 $user->company = $request->company;
+                 $user->number = $request->number;
+                 $user->city = $request->city;
+                 $user->country = $request->country;
+                 $user->type = 'user';
+                 $save = $user->save();
+
+                 if($save){
+                    session()->flash('success', 'Your message');
+                    return redirect()->route('login');
+
+                 }else{
+                     return back()->with('fail','Something went wrong, try again later');
+                 }
+    }
    
     function check(Request $request){
         //Validate requests
         $request->validate([
-             'email'=>'required|email|max:50',
-             'password'=>'required|alphaNum|min:8|max:20'
+            'email' => 'required | min:10 | max:50 | email',
+            'password' => 'required | min:8 | max:20 | alpha_num'
         ]);
 
-        $userInfo = User::where('email','=', $request->email)->first();
+        $userInfo = user::where('email','=', $request->email)->first();
 
         if(!$userInfo){
             return back()->with('fail','We do not recognize your email address');
@@ -28,7 +72,7 @@ class MainController extends Controller
             //check password
             if(Hash::check($request->password, $userInfo->password)){
                 $request->session()->put('LoggedUser', $userInfo->id);
-                return redirect('user/dashboard');
+                return redirect('/auth/login')->with('fail','Incorrect password');
 
             }else{
                 return back()->with('fail','Incorrect password');

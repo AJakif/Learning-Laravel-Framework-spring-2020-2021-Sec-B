@@ -13,6 +13,7 @@
             <div class="col-md-4 col-md-offset-4">
                 <h4>| Login |</h4><hr>
                 <form action="{{route('auth.check')}}" method="post">
+                {{Session::get('success')}}
                 @if(Session::get('fail'))
                 <div class="alert alert-danger">
                     {{ Session::get('fail') }}
@@ -32,7 +33,7 @@
               </div>
               <button type="submit" class="btn btn-block btn-primary">Sign In</button>
               <br>
-              <a href="">I don't have an account, create new</a>
+              <a href="{{ route('auth.register') }}">I don't have an account, create new</a>
            </form>
             </div>    
         </div>
