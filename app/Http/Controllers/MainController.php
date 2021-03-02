@@ -60,7 +60,8 @@ class MainController extends Controller
         //Validate requests
         $request->validate([
             'email' => 'required | min:10 | max:50 | email',
-            'password' => 'required | min:8 | max:20 | alpha_num'
+            'password' => 'required | min:8 | max:20 | alpha_num',
+            
         ]);
 
         $userInfo = user::where('email','=', $request->email)->first();
@@ -69,9 +70,16 @@ class MainController extends Controller
             return back()->with('fail','We do not recognize your email address');
         }else{
             //check password
-            if(Hash::check($request->password, $userInfo->password)){
-                $request->session()->put('LoggedUser', $userInfo->id);
-                return redirect('user/dashboard');
+            if(Hash::check($request->password, $userInfo->password))
+            {
+               if($userInfo->type == 'user'){
+                    $request->session()->put('LoggedUser', $userInfo->id);
+                    return redirect('user/dashboard');
+                }
+                elseif($userInfo->type == 'admin'){
+                    $request->session()->put('LoggedUser', $userInfo->id);
+                    return redirect('admin/dashboard');
+                }
 
             }
             else{
@@ -87,18 +95,31 @@ class MainController extends Controller
         }
     }
 
-    function dashboard(){
+    function userdashboard(){
         $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
         return view('user.dashboard', $data);
     }
-    function settings(){
+    function usersettings(){
         $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
         return view('user.settings', $data);
     }
 
-    function profile(){
+    function userprofile(){
         $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
         return view('user.profile', $data);
+    }
+    function admindashboard(){
+        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
+        return view('admin.dashboard', $data);
+    }
+    function adminsettings(){
+        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
+        return view('admin.settings', $data);
+    }
+
+    function adminprofile(){
+        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
+        return view('admin.profile', $data);
     }
     
 }
