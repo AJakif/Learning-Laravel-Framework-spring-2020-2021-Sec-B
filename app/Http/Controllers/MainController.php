@@ -9,12 +9,10 @@ use Illuminate\Support\Facades\Hash;
 
 class MainController extends Controller
 {
-    function login(){
-        return view('auth.login');
-    }
+    
 
     function register(){
-        return view('auth.register');
+        return view('reg.register');
     }
 
     function save(Request $request){
@@ -26,11 +24,11 @@ class MainController extends Controller
             'email' => 'required | min:10 | max:50 | email | unique:users',
             'password' => 'required | min:8 | max:20 | alpha_num',
             'cpassword' => 'required | same:password',
-            'address' => 'required',
-            'company' => 'required | min:3 | max:20',
+           // 'address' => 'required',
+            //'company' => 'required | min:3 | max:20',
             'number' => 'required|digits:11',
-            'city' => 'required | min:3 | max:20',
-            'country' => 'required | min:3 | max:20',
+            //'city' => 'required | min:3 | max:20',
+           // 'country' => 'required | min:3 | max:20',
 
         ]);
 
@@ -40,86 +38,36 @@ class MainController extends Controller
                  $user->username = $request->username;
                  $user->email = $request->email;
                  $user->password = Hash::make($request->password);
-                 $user->address = $request->address;
-                 $user->company = $request->company;
+              //   $user->address = $request->address;
+             //    $user->company = $request->company;
                  $user->number = $request->number;
-                 $user->city = $request->city;
-                 $user->country = $request->country;
+                // $user->city = $request->city;
+               //  $user->country = $request->country;
                  $user->type = 'user';
                  $save = $user->save();
 
                  if($save){
-                    return redirect('/auth/login')->with('success','Registration Succesfull');
+                    return redirect('/login')->with('success','Registration Succesfull');
 
                  }else{
                      return back()->with('fail','Something went wrong, try again later');
                  }
     }
-   
-    function check(Request $request){
-        //Validate requests
-        $request->validate([
-            'email' => 'required | min:10 | max:50 | email',
-            'password' => 'required | min:8 | max:20 | alpha_num',
-            
-        ]);
-
-        $userInfo = user::where('email','=', $request->email)->first();
-
-        if(!$userInfo){
-            return back()->with('fail','We do not recognize your email address');
-        }else{
-            //check password
-            if(Hash::check($request->password, $userInfo->password))
-            {
-               if($userInfo->type == 'user'){
-                    $request->session()->put('LoggedUser', $userInfo->id);
-                    return redirect('user/dashboard');
-                }
-                elseif($userInfo->type == 'admin'){
-                    $request->session()->put('LoggedUser', $userInfo->id);
-                    return redirect('admin/dashboard');
-                }
-
-            }
-            else{
-                return back()->with('fail','Incorrect password');
-            }
-        }
-    }
-
-    function logout(){
-        if(session()->has('LoggedUser')){
-            session()->pull('LoggedUser');
-            return redirect('/auth/login');
-        }
-    }
-
-    function userdashboard(){
-        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
-        return view('user.dashboard', $data);
-    }
-    function usersettings(){
-        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
-        return view('user.settings', $data);
-    }
-
-    function userprofile(){
-        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
-        return view('user.profile', $data);
-    }
-    function admindashboard(){
-        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
-        return view('admin.dashboard', $data);
-    }
-    function adminsettings(){
-        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
-        return view('admin.settings', $data);
-    }
-
-    function adminprofile(){
-        $data = ['LoggedUserInfo'=>user::where('id','=', session('LoggedUser'))->first()];
-        return view('admin.profile', $data);
-    }
     
+    public function delete($id){
+
+        $user = User::find($id);
+        return view('admin.Dashboard.delete')->with('user', $user);
+    }
+
+    public function destroy($id){
+
+        if(User::destroy($id)){
+            return redirect('/home/userlist');
+        }else{
+            return redirect('/home/delete/'.$id);
+        }
+
+    }
+ //end of main   
 }
