@@ -32,8 +32,12 @@
                       
                        <li><a href="/admin/profile">Profile</a></li>
                        <li><a href="/admin/settings">Settings</a></li>
-                       <li><a href="">Delete</a> </li>
-                       
+                       <li><a href="{{route('home.Clist')}}">Customer List</a></li>
+                       <li><a href="{{route('system.salesLog')}}">View Sales Log</a></li>
+                       <li><a href="{{route('system.socialMedia')}}">Social Media</a></li>
+                       <li><a href="{{route('system.ecommerce')}}">E-Commerce Web App</a></li>
+                       <li><a href="{{route('product.Elist')}}">Existing Product List</a></li>
+                       <li><a href="{{route('product.Ulist')}}">Upcoming Product List</a></li>
                    </ul>
             </div>
          </div>

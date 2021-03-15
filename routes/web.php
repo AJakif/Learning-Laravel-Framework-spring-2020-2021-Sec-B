@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\Physical_Store_Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,5 +56,10 @@ Route::group(['middleware'=>['AuthCheck']], function(){
     //delete
     Route::get('/delete/{id}', [MainController::class,'delete'])->name('user.delete');
     Route::post('/delete/{id}', [MainController::class,'destroy']);
+
+    //System Routing
+    Route::get('/system/sales/physical_store', [Physical_Store_Controller::class,'physicalStorelist'])->name('system.physicalStore');
+    Route::get('/system/sales/social_media', [Physical_Store_Controller::class,'socialMedialist'])->name('system.socialMedia');
+    Route::get('/system/sales/ecommerce', [Physical_Store_Controller::class,'ecommercelist'])->name('system.ecommerce');
     
 });
